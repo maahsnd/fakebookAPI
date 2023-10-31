@@ -1,11 +1,17 @@
 const createError = require('http-errors');
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const User = require('./models/User');
 const passport = require('passport');
+const cors = require('cors');
+require('dotenv').config();
+require('./mongoConfig');
+
+const User = require('./models/User');
 const facebookStrategy = require('./facebookStrategy').strategy;
+
 passport.use(facebookStrategy);
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -20,9 +26,6 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-require('dotenv').config();
-require('./mongoConfig');
-
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -35,11 +38,7 @@ app.use(
     saveUninitialized: true
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use();
-
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

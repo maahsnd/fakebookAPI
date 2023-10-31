@@ -1,10 +1,11 @@
 const FacebookStrategy = require('passport-facebook');
 const User = require('./models/User');
+require('dotenv').config();
 
 exports.strategy = new FacebookStrategy(
   {
-    clientID: process.env['FACEBOOK_APP_ID'],
-    clientSecret: process.env['FACEBOOK_APP_SECRET'],
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: 'http://localhost:5173/'
   },
   async (accessToken, refreshToken, profile, done) => {
