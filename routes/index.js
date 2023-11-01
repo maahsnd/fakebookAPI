@@ -4,16 +4,21 @@ const passport = require('passport');
 
 /* GET home page. */
 router.get(
-  '/',
+  '/auth/facebook/callback/',
   passport.authenticate('facebook', {
-    failureRedirect: '/login',
+    failureRedirect: '/fail',
     failureMessage: true
   }),
+
   function (req, res) {
-    res.redirect('/');
+    res.send('success');
   }
 );
 
 router.get('/login/facebook', passport.authenticate('facebook'));
+
+router.get('/login', function (req, res, next) {
+  res.send('login route');
+});
 
 module.exports = router;
