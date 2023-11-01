@@ -46,7 +46,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log('reached');
         const user = await User.findOne({ username: profile.displayName });
         console.log('user:' + user);
         if (user) {

@@ -11,14 +11,19 @@ router.get(
   }),
 
   function (req, res) {
-    res.send('success');
+    res.redirect('http://localhost:5173/');
   }
 );
 
 router.get('/login/facebook', passport.authenticate('facebook'));
 
-router.get('/login', function (req, res, next) {
-  res.send('login route');
+router.get('/', function (req, res, next) {
+  console.log('req.user ' + req.user);
+  res.send('login success');
+});
+
+router.get('/fail', function (req, res, next) {
+  res.send('login fail');
 });
 
 module.exports = router;
