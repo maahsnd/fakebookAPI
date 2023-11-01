@@ -6,12 +6,11 @@ const passport = require('passport');
 router.get(
   '/auth/facebook/callback/',
   passport.authenticate('facebook', {
-    failureRedirect: '/fail',
+    failureRedirect: 'http://localhost:5173/login',
     failureMessage: true
   }),
-
   function (req, res) {
-    res.redirect('http://localhost:5173/');
+    res.redirect('http://localhost:5173/' + req.user._id);
   }
 );
 
