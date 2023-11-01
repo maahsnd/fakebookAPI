@@ -10,7 +10,7 @@ const User = require('./models/User');
 const cors = require('cors');
 require('dotenv').config();
 require('./mongoConfig');
-require('./seeds').createUsers();
+/* require('./seeds').createUsers(); */
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
