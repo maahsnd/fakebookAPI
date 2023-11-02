@@ -1,6 +1,8 @@
 const { faker } = require('@faker-js/faker');
 const User = require('./models/User');
 const FriendRequest = require('./models/FriendRequest');
+const dotenv = require('dotenv').config();
+require('./mongoConfig');
 
 async function createRandomUser() {
   const user = new User({
