@@ -11,46 +11,58 @@ exports.create_post = [
     .withMessage('Post text cannot be blank')
     .escape(),
 
-  asyncHandler(async (req, res, next) => {
-    const errors = validationResult(req).errors;
-    console.log('req.user---->' + req.user);
-    if (errors.length) {
-      console.error('err--->' + errors);
-      res.status(401).json(errors);
-      return;
+  async (req, res, next) => {
+    try {
+      const errors = validationResult(req).errors;
+      if (errors.length) {
+        console.error('err--->' + errors);
+        return res.status(401).json(errors);
+      }
+      const author = req.body.author;
+      const newPost = new Post({
+        author: author,
+        text: req.body.text,
+        comments: [],
+        likes: []
+      });
+      await newPost.save();
+      await User.updateOne(
+        { _id: req.body.author },
+        { $push: { posts: newPost } }
+      );
+      res.status(200).json({ post: newPost, user: user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
     }
-    //user._id
-    const author = req.body.author;
-    const newPost = new Post({
-      author: author,
-      text: req.body.text,
-      comments: [],
-      likes: []
-    });
-    await newPost.save();
-    await User.updateOne(
-      { _id: req.body.author },
-      { $push: { posts: newPost } }
-    );
-    res.status(200).json({ post: newPost, user: user });
-  })
+  }
 ];
 
-exports.get_post = asyncHandler(async (req, res, next) => {
-  const postId = req.params.postid;
-  const post = await Post.findById(postId)
-    .populate({ path: 'comments', populate: { path: author } })
-    .populate({ path: 'likes' })
-    .exec();
-  res.status(200).json({ post: post });
-});
+exports.get_post = async (req, res, next) => {
+  try {
+    const postId = req.params.postid;
+    const post = await Post.findById(postId)
+      .populate({ path: 'comments', populate: { path: author } })
+      .populate({ path: 'likes' })
+      .exec();
+    res.status(200).json({ post: post });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+};
 
-exports.like_post = asyncHandler(async (req, res, next) => {
-  const postId = req.params.postid;
-  const userId = req.body.userid;
-  await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
-  res.status(200).send();
-});
+exports.like_post = async (req, res, next) => {
+  try {
+    const postId = req.params.postid;
+    const userId = req.body.userid;
+    await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
+    res.status(200).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+};
 
 exports.create_comment = [
   body('text')
@@ -59,24 +71,26 @@ exports.create_comment = [
     .withMessage('Comment cannot be blank')
     .escape(),
 
-  asyncHandler(async (req, res, next) => {
-    const errors = validationResult(req).errors;
-
-    if (errors.length) {
-      console.error('err--->' + errors);
-      res.status(401).json(errors);
-      return;
+  async (req, res, next) => {
+    try {
+      const errors = validationResult(req).errors;
+      if (errors.length) {
+        console.error('err--->' + errors);
+        return res.status(401).json(errors);
+      }
+      const userId = req.body.userid;
+      const postId = req.params.postid;
+      const comment = new Comment({
+        author: userId,
+        text: req.body.text,
+        post: postId
+      });
+      await comment.save();
+      await Post.updateOne({ _id: postId }, { $push: { comments: comment } });
+      res.status(200).json({ comment: comment });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
     }
-
-    const userId = req.body.userid;
-    const postId = req.params.postid;
-    const comment = new Comment({
-      author: userId,
-      text: req.body.text,
-      post: postId
-    });
-    await comment.save();
-    await Post.updateOne({ _id: postId }, { $push: { comments: comment } });
-    res.status(200).json({ comment: comment });
-  })
+  }
 ];
