@@ -42,7 +42,7 @@ exports.get_post = async (req, res, next) => {
   try {
     const postId = req.params.postid;
     const post = await Post.findById(postId)
-      .populate({ path: 'comments', populate: { path: author } })
+      .populate({ path: 'comments', populate: { path: 'author' } })
       .populate({ path: 'likes' })
       .exec();
     res.status(200).json({ post: post });
