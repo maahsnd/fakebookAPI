@@ -13,9 +13,13 @@ exports.create_post = asyncHandler(async (req, res, next) => {
     likes: []
   });
   await newPost.save();
-  const user = await User.updateOne(
-    { _id: req.body.author },
-    { $push: { posts: newPost } }
-  );
+  await User.updateOne({ _id: req.body.author }, { $push: { posts: newPost } });
   res.status(200).json({ post: newPost, user: user });
+});
+
+exports.like_post = asyncHandler(async (req, res, next) => {
+  const postId = req.params.postid;
+  const userId = req.body.userid;
+  await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
+  res.status(200).send();
 });
