@@ -9,4 +9,6 @@ router.post('/', postController.create_post);
 
 router.post('/:postid/likes', postController.like_post);
 
+router.post('/:postid/comments', postController.create_comment);
+
 module.exports = router;
