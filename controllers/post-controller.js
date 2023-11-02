@@ -4,20 +4,37 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const { body, validationResult } = require('express-validator');
 
-exports.create_post = asyncHandler(async (req, res, next) => {
-  console.log('req.user---->' + req.user);
-  //user._id
-  const author = req.body.author;
-  const newPost = new Post({
-    author: author,
-    text: req.body.text,
-    comments: [],
-    likes: []
-  });
-  await newPost.save();
-  await User.updateOne({ _id: req.body.author }, { $push: { posts: newPost } });
-  res.status(200).json({ post: newPost, user: user });
-});
+exports.create_post = [
+  body('text')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Post text cannot be blank')
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req).errors;
+    console.log('req.user---->' + req.user);
+    if (errors.length) {
+      console.error('err--->' + errors);
+      res.status(401).json(errors);
+      return;
+    }
+    //user._id
+    const author = req.body.author;
+    const newPost = new Post({
+      author: author,
+      text: req.body.text,
+      comments: [],
+      likes: []
+    });
+    await newPost.save();
+    await User.updateOne(
+      { _id: req.body.author },
+      { $push: { posts: newPost } }
+    );
+    res.status(200).json({ post: newPost, user: user });
+  })
+];
 
 exports.like_post = asyncHandler(async (req, res, next) => {
   const postId = req.params.postid;
