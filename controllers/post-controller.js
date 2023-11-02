@@ -36,6 +36,15 @@ exports.create_post = [
   })
 ];
 
+exports.get_post = asyncHandler(async (req, res, next) => {
+  const postId = req.params.postid;
+  const post = await Post.findById(postId)
+    .populate({ path: 'comments', populate: { path: author } })
+    .populate({ path: 'likes' })
+    .exec();
+  res.status(200).json({ post: post });
+});
+
 exports.like_post = asyncHandler(async (req, res, next) => {
   const postId = req.params.postid;
   const userId = req.body.userid;

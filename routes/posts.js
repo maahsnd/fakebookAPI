@@ -7,6 +7,8 @@ const authHelper = require('../authHelper');
 /* Create post */
 router.post('/', postController.create_post);
 
+router.get('/:postid', postController.get_post);
+
 router.post('/:postid/likes', postController.like_post);
 
 router.post('/:postid/comments', postController.create_comment);
