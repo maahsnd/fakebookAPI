@@ -14,6 +14,7 @@ require('./mongoConfig');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const postsRouter = require('./routes/posts');
 
 const app = express();
 
@@ -83,6 +84,7 @@ passport.deserializeUser(async (id, done) => {
 // Define your routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
 
 // Error handling middleware
 app.use(function (err, req, res, next) {
