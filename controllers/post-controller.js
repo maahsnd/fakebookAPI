@@ -11,7 +11,7 @@ exports.create_post = [
     .withMessage('Post text cannot be blank')
     .escape(),
 
-  async (req, res, next) => {
+  asyncHandler(async (req, res, next) => {
     try {
       const errors = validationResult(req).errors;
       if (errors.length) {
@@ -35,10 +35,12 @@ exports.create_post = [
       console.error(err);
       res.status(500).json(err);
     }
-  }
+  })
 ];
 
-exports.get_post = async (req, res, next) => {
+exports.get_all_posts = asyncHandler(async (req, res, next) => {});
+
+exports.get_post = asyncHandler(async (req, res, next) => {
   try {
     const postId = req.params.postid;
     const post = await Post.findById(postId)
@@ -50,9 +52,9 @@ exports.get_post = async (req, res, next) => {
     console.error(err);
     res.status(500).json(err);
   }
-};
+});
 
-exports.like_post = async (req, res, next) => {
+exports.like_post = asyncHandler(async (req, res, next) => {
   try {
     const postId = req.params.postid;
     const userId = req.body.userid;
@@ -62,7 +64,7 @@ exports.like_post = async (req, res, next) => {
     console.error(err);
     res.status(500).json(err);
   }
-};
+});
 
 exports.create_comment = [
   body('text')
@@ -71,7 +73,7 @@ exports.create_comment = [
     .withMessage('Comment cannot be blank')
     .escape(),
 
-  async (req, res, next) => {
+  asyncHandler(async (req, res, next) => {
     try {
       const errors = validationResult(req).errors;
       if (errors.length) {
@@ -92,5 +94,5 @@ exports.create_comment = [
       console.error(err);
       res.status(500).json(err);
     }
-  }
+  })
 ];
