@@ -57,7 +57,8 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: 'https://localhost:3000/auth/facebook/callback/'
+      callbackURL: 'https://localhost:3000/auth/facebook/callback/',
+      profileFields: ['displayName']
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -69,7 +70,8 @@ passport.use(
           const newUser = new User({
             username: profile.displayName,
             friends: [],
-            posts: []
+            posts: [],
+            friendRequests: []
           });
           await newUser.save();
           return done(null, newUser);
@@ -82,14 +84,12 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log('serialize user' + user);
   return done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id).exec();
-    console.log('DESERIALIZE user:  ' + user);
     return done(null, user);
   } catch (err) {
     return done(err);
