@@ -10,7 +10,6 @@ const User = require('./models/User');
 const cors = require('cors');
 require('dotenv').config();
 require('./mongoConfig');
-/* require('./seeds').createUsers(); */
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -22,21 +21,35 @@ const app = express();
 app.use(
   session({
     secret: process.env.SECRET_KEY,
+    saveUninitialized: true,
     resave: true,
-    saveUninitialized: true
+    cookie: {
+      secure: true,
+      sameSite: 'none'
+    }
   })
 );
 
-// Initialize Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  })
+);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Initialize Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Define your routes
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
 
 // Passport Configuration
 passport.use(
@@ -44,7 +57,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: 'https://localhost:3000/auth/facebook/callback/' // Make sure this matches your Facebook App configuration
+      callbackURL: 'https://localhost:3000/auth/facebook/callback/'
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -69,22 +82,19 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  console.log('serialize user' + user);
+  return done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const user = await User.findById(id).exec();
+    console.log('DESERIALIZE user:  ' + user);
+    return done(null, user);
   } catch (err) {
-    done(err);
+    return done(err);
   }
 });
-
-// Define your routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/posts', postsRouter);
 
 // Error handling middleware
 app.use(function (err, req, res, next) {
