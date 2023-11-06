@@ -30,7 +30,7 @@ exports.create_post = [
         { _id: req.body.author },
         { $push: { posts: newPost } }
       );
-      res.status(200).json({ post: newPost, user: user });
+      res.status(200).send();
     } catch (err) {
       console.error(err);
       res.status(500).json(err);
