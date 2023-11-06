@@ -28,8 +28,13 @@ router.get('/', function (req, res, next) {
   res.send('login success');
 });
 
-router.get('/fail', function (req, res, next) {
-  res.send('login fail');
+router.post('/logout', function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.status(200).send();
+  });
 });
 
 module.exports = router;
