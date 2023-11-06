@@ -13,7 +13,7 @@ exports.get_friends = asyncHandler(async (req, res, next) => {
     const friends = await User.find({ friends: { $in: [userid] } })
       .sort('username')
       .exec();
-    res.status(200).json(friends[0]);
+    res.status(200).json(friends);
   } catch (err) {
     console.error(err);
     res.status(500).json(err);
