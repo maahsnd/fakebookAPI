@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
-const FriendRequest = require('../models/FriendRequest');
 const { request } = require('https');
 
 exports.get_user = asyncHandler(async (req, res, next) => {
@@ -27,13 +26,12 @@ exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
     const users = await User.find({
       $and: [
         { friends: { $nin: [userid] } }, // Exclude users where userid is in their friends
-        { _id: { $ne: userid } } // Exclude users where ID matches userid
+        { _id: { $ne: userid } }, // Exclude users where ID matches userid,
+        { friendRequests: { $nin: [userid] } }
       ]
     })
       .sort('username')
       .exec();
-
-    console.log(users[0].friendRequests.from);
     res.status(200).json(users);
   } catch (err) {
     console.error(err);
