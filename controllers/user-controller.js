@@ -7,6 +7,19 @@ exports.get_user = asyncHandler(async (req, res, next) => {
   res.status(200).json(data);
 });
 
+exports.get_friends = asyncHandler(async (req, res, next) => {
+  const userid = req.params.id;
+  try {
+    const friends = await User.find({ friends: { $in: [userid] } })
+      .sort('username')
+      .exec();
+    res.status(200).json(friends[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
 exports.create_friend_request = asyncHandler(async (req, res, next) => {
   const from = req.params.id;
   const to = req.body.to;

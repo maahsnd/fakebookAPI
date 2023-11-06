@@ -5,6 +5,8 @@ const UserController = require('../controllers/user-controller');
 /* GET users listing. */
 router.get('/:id', UserController.get_user);
 
+router.get(':/id', UserController.get_friends);
+
 router.post('/:id/friendrequests', UserController.create_friend_request);
 
 router.post(
