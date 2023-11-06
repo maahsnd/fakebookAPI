@@ -22,7 +22,8 @@ async function createRandomUser() {
   const user = new User({
     _id: faker.database.mongodbObjectId(),
     username: faker.person.fullName(),
-    profilePhoto: faker.image.avatar()
+    profilePhoto: faker.image.avatar(),
+    friends: [getRandomElementFromArray(users)]
   });
   await user.save();
   return user;
