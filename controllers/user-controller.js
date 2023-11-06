@@ -20,6 +20,26 @@ exports.get_friends = asyncHandler(async (req, res, next) => {
   }
 });
 
+exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
+  const userid = req.params.id;
+  try {
+    const users = await User.find({
+      $and: [
+        { friends: { $nin: [userid] } }, // Exclude users where userid is in their friends
+        { _id: { $ne: userid } } // Exclude users where ID matches userid
+      ]
+    })
+      .sort('username')
+      .exec();
+
+    console.log(users);
+    res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
 exports.create_friend_request = asyncHandler(async (req, res, next) => {
   const from = req.params.id;
   const to = req.body.to;

@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user-controller');
+const User = require('../models/User');
 
 /* GET users listing. */
+router.get('/:id/suggested_friends', UserController.get_suggested_friends);
+
 router.get('/:id', UserController.get_user);
 
 router.get('/:id/friends', UserController.get_friends);
