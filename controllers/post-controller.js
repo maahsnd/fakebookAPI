@@ -47,6 +47,7 @@ exports.get_all_posts = asyncHandler(async (req, res, next) => {
       .populate({ path: 'comments', populate: { path: 'author' } })
       .populate({ path: 'likes' })
       .populate('author')
+      .sort('-time')
       .exec();
     res.status(200).json(posts);
   } catch (err) {
