@@ -40,7 +40,7 @@ exports.create_post = [
 
 exports.get_all_posts = asyncHandler(async (req, res, next) => {
   try {
-    const userId = req.body.userid;
+    const userId = req.params.userid;
     const user = await User.findById(userId);
     userAndFriends = [user._id, ...user.friends];
     const posts = await Post.find({ author: { $in: userAndFriends } })
