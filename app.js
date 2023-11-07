@@ -46,11 +46,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Define your routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/posts', postsRouter);
-
 // Passport Configuration
 passport.use(
   new FacebookStrategy(
@@ -83,16 +78,22 @@ passport.use(
   )
 );
 
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
+
 passport.serializeUser((user, done) => {
-  return done(null, user._id);
+  console.log('SERIALIZE, PARAM---->' + user);
+  done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log('DESERIALIZE, PARAM---->' + id);
   try {
     const user = await User.findById(id).exec();
-    return done(null, user);
+    done(null, user);
   } catch (err) {
-    return done(err);
+    done(err);
   }
 });
 

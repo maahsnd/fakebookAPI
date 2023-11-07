@@ -3,6 +3,8 @@ const User = require('../models/User');
 const { request } = require('https');
 
 exports.get_user = asyncHandler(async (req, res, next) => {
+  console.log('req.user--->' + req.user);
+  console.log('req.session.passport--->' + req.session.passport);
   const data = await User.findOne({ _id: req.params.id });
   res.status(200).json(data);
 });

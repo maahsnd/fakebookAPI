@@ -14,12 +14,14 @@ router.get(
       if (err) {
         return next(err);
       }
+      console.log('req.user passport--->' + req.user);
+      console.log('req.session.passport passport--->' + req.session.passport);
     });
     res.redirect('http://localhost:5173/' + req.user._id);
   }
 );
 
-//called by click on log in link
+//called by click on fb log in link
 router.get('/login/facebook', passport.authenticate('facebook'));
 
 //called after successful log in
