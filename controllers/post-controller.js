@@ -75,7 +75,10 @@ exports.like_post = asyncHandler(async (req, res, next) => {
   try {
     const postId = req.params.postid;
     const userId = req.body.userid;
-    await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
+    await Post.updateOne(
+      { _id: postId, likes: { $ne: userId } },
+      { $push: { likes: userId, options: 2 } }
+    );
     res.status(200).send();
   } catch (err) {
     console.error(err);
@@ -87,9 +90,7 @@ exports.create_comment = [
   body('text')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Comment cannot be blank')
-    .escape(),
-
+    .withMessage('Comment cannot be blank'),
   asyncHandler(async (req, res, next) => {
     try {
       const errors = validationResult(req).errors;
