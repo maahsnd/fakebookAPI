@@ -41,6 +41,19 @@ exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
   }
 });
 
+exports.get_friend_requests = asyncHandler(async (req, res, next) => {
+  const userid = req.params.id;
+  try {
+    const friendRequests = await User.findById(userid)
+      .populate('friendRequests')
+      .exec();
+    res.status(200).json(friendRequests);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send();
+  }
+});
+
 exports.create_friend_request = asyncHandler(async (req, res, next) => {
   const from = req.params.id;
   const to = req.body.to;
