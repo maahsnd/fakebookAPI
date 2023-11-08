@@ -5,7 +5,9 @@ const { request } = require('https');
 exports.get_user = asyncHandler(async (req, res, next) => {
   console.log('req.user--->' + req.user);
   console.log('req.session.passport--->' + req.session.passport);
-  const data = await User.findOne({ _id: req.params.id });
+  const data = await User.findOne({ _id: req.params.id })
+    .populate('friendRequests')
+    .exec();
   res.status(200).json(data);
 });
 
@@ -38,19 +40,6 @@ exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
   } catch (err) {
     console.error(err);
     res.status(500).json(err);
-  }
-});
-
-exports.get_friend_requests = asyncHandler(async (req, res, next) => {
-  const userid = req.params.id;
-  try {
-    const friendRequests = await User.findById(userid)
-      .populate('friendRequests')
-      .exec();
-    res.status(200).json(friendRequests);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send();
   }
 });
 
