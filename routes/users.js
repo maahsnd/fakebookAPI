@@ -2,6 +2,18 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user-controller');
 const User = require('../models/User');
+const multer = require('multer');
+const path = require('path');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const store = path.join(process.cwd(), '/uploads');
+    cb(null, store);
+  },
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
 
 /* GET users listing. */
 router.get('/:id/suggested_friends', UserController.get_suggested_friends);
@@ -11,6 +23,8 @@ router.get('/:id', UserController.get_user);
 router.get('/:id/friends', UserController.get_friends);
 
 router.post('/:id/friendrequests', UserController.create_friend_request);
+
+router.post('/:id/profilepic', upload.any(), UserController.update_pic);
 
 router.post(
   '/:id/friendrequests/:requestid/accept',

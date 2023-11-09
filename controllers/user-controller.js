@@ -2,6 +2,16 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const { request } = require('https');
 const { ObjectId } = require('mongodb');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+require('dotenv').config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+  secure: true
+});
 
 exports.get_user = asyncHandler(async (req, res, next) => {
   const data = await User.findOne({ _id: req.params.id })
@@ -86,5 +96,17 @@ exports.decline_friend_request = asyncHandler(async (req, res, next) => {
     console.error(error);
     res.status(500).send();
   }
+  res.status(200).send();
+});
+
+exports.update_pic = asyncHandler(async (req, res, next) => {
+  const userId = req.params.id;
+  console.log(req.files[0].path);
+  const response = await cloudinary.uploader.upload(req.files[0].path);
+  console.log(response);
+  await User.findOneAndUpdate(
+    { _id: userId },
+    { $set: { profilePhoto: response.secure_url } }
+  );
   res.status(200).send();
 });
