@@ -14,8 +14,6 @@ router.get(
       if (err) {
         return next(err);
       }
-      console.log('req.user passport--->' + req.user);
-      console.log('req.session.passport passport--->' + req.session.passport);
     });
     res.redirect('http://localhost:5173/' + req.user._id);
   }

@@ -83,12 +83,10 @@ app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 
 passport.serializeUser((user, done) => {
-  console.log('SERIALIZE, PARAM---->' + user);
   done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log('DESERIALIZE, PARAM---->' + id);
   try {
     const user = await User.findById(id).exec();
     done(null, user);
