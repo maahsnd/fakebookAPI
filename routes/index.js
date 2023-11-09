@@ -24,7 +24,6 @@ router.get('/login/facebook', passport.authenticate('facebook'));
 
 //called after successful log in
 router.get('/', function (req, res, next) {
-  console.log('req.user ' + req.user);
   res.send('login success');
 });
 
