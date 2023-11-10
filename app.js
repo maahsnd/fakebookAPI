@@ -4,8 +4,6 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const passport = require('passport');
-const FacebookStrategy = require('passport-facebook');
 const User = require('./models/User');
 const cors = require('cors');
 require('dotenv').config();
@@ -42,58 +40,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Passport Configuration
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: 'https://localhost:3000/auth/facebook/callback/',
-      profileFields: ['displayName']
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const user = await User.findOne({ username: profile.displayName });
-        if (user) {
-          return done(null, user);
-        }
-        if (!user) {
-          const newUser = new User({
-            username: profile.displayName,
-            friends: [],
-            posts: [],
-            friendRequests: []
-          });
-          await newUser.save();
-          return done(null, newUser);
-        }
-      } catch (err) {
-        return done(err);
-      }
-    }
-  )
-);
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
-
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id).exec();
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
 
 // Error handling middleware
 app.use(function (err, req, res, next) {
