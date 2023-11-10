@@ -8,8 +8,7 @@ exports.create_post = [
   body('text')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Post text cannot be blank')
-    .escape(),
+    .withMessage('Post text cannot be blank'),
 
   asyncHandler(async (req, res, next) => {
     try {
