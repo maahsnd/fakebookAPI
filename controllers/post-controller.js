@@ -55,6 +55,22 @@ exports.get_all_posts = asyncHandler(async (req, res, next) => {
   }
 });
 
+exports.get_all_user_posts = asyncHandler(async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+    const posts = await Post.find({ author: userId })
+      .populate({ path: 'comments', populate: { path: 'author' } })
+      .populate({ path: 'likes' })
+      .populate('author')
+      .sort('-time')
+      .exec();
+    res.status(200).json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
 exports.get_post = asyncHandler(async (req, res, next) => {
   try {
     const postId = req.params.postid;
