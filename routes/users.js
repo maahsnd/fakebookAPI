@@ -28,4 +28,6 @@ router.post(
   UserController.decline_friend_request
 );
 
+router.post('/:id/bio', UserController.update_bio);
+
 module.exports = router;

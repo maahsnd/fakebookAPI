@@ -7,7 +7,8 @@ const UserSchema = new Schema({
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
   friendRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  profilePhoto: { type: String }
+  profilePhoto: { type: String },
+  bio: { type: String, maxLength: 400 }
 });
 
 module.exports = mongoose.model('User', UserSchema);

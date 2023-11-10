@@ -5,6 +5,7 @@ const { ObjectId } = require('mongodb');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 require('dotenv').config();
+const { body, validationResult } = require('express-validator');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -127,3 +128,27 @@ exports.update_pic = asyncHandler(async (req, res, next) => {
 
   res.status(200).send();
 });
+
+exports.update_bio = [
+  body('text')
+    .trim()
+    .isLength({ max: 400 })
+    .withMessage('Bio cannot exceeed 400 char'),
+
+  asyncHandler(async (req, res, next) => {
+    try {
+      const errors = validationResult(req).errors;
+      if (errors.length) {
+        console.error('err--->' + errors);
+        return res.status(401).json(errors);
+      }
+      await User.findByIdAndUpdate(req.params.id, {
+        $set: { bio: req.body.text }
+      }).exec();
+      res.status(200).send();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send();
+    }
+  })
+];
