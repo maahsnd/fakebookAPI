@@ -4,16 +4,8 @@ const UserController = require('../controllers/user-controller');
 const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const store = path.join(process.cwd(), '/uploads');
-    cb(null, store);
-  },
-  filename: function (req, file, callback) {
-    callback(null, Date.now() + file.originalname);
-  }
-});
-const upload = multer({ storage: storage });
+const storage = new multer.memoryStorage();
+const upload = multer({ storage });
 
 /* GET users listing. */
 router.get('/:id/suggested_friends', UserController.get_suggested_friends);
