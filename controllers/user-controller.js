@@ -25,6 +25,7 @@ async function handleUpload(file) {
 exports.get_user = asyncHandler(async (req, res, next) => {
   const data = await User.findOne({ _id: req.params.id })
     .populate('friendRequests')
+    .populate('friends')
     .exec();
   res.status(200).json(data);
 });
