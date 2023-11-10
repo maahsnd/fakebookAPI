@@ -13,6 +13,14 @@ cloudinary.config({
   secure: true
 });
 
+async function handleUpload(file) {
+  const res = await cloudinary.uploader.upload(file, {
+    resource_type: 'auto',
+    folder: 'fakebook'
+  });
+  return res;
+}
+
 exports.get_user = asyncHandler(async (req, res, next) => {
   const data = await User.findOne({ _id: req.params.id })
     .populate('friendRequests')
@@ -101,12 +109,21 @@ exports.decline_friend_request = asyncHandler(async (req, res, next) => {
 
 exports.update_pic = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
-  console.log(req.files[0].path);
-  const response = await cloudinary.uploader.upload(req.files[0].path);
-  console.log(response);
-  await User.findOneAndUpdate(
-    { _id: userId },
-    { $set: { profilePhoto: response.secure_url } }
-  );
+  try {
+    const b64 = Buffer.from(req.files[0].buffer).toString('base64');
+    let dataURI = 'data:' + req.files[0].mimetype + ';base64,' + b64;
+    const cldRes = await handleUpload(dataURI);
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { profilePhoto: cldRes.secure_url } }
+    );
+  } catch (error) {
+    console.log(error);
+    res.send({
+      message: error.message
+    });
+    return;
+  }
+
   res.status(200).send();
 });
