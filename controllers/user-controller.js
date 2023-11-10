@@ -142,9 +142,13 @@ exports.update_bio = [
         console.error('err--->' + errors);
         return res.status(401).json(errors);
       }
-      await User.findByIdAndUpdate(req.params.id, {
-        $set: { bio: req.body.text }
-      }).exec();
+      await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: { bio: req.body.text }
+        },
+        { upsert: true }
+      ).exec();
       res.status(200).send();
     } catch (err) {
       console.error(err);
