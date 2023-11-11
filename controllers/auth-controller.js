@@ -3,6 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 exports.sign_up = [
   body('username')
@@ -70,6 +71,7 @@ exports.log_in = asyncHandler(async (req, res, next) => {
   const token = jwt.sign({ username }, process.env.SECRET, {
     expiresIn: '2hr'
   });
+  console.error('success');
   return res.status(200).json({
     msg: 'Log in successful',
     token,
