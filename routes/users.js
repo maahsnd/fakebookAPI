@@ -6,6 +6,8 @@ const multer = require('multer');
 const path = require('path');
 const storage = new multer.memoryStorage();
 const upload = multer({ storage });
+const JWT = require('../verifyJWT');
+router.use(JWT.verify);
 
 /* GET users listing. */
 router.get('/:id/suggested_friends', UserController.get_suggested_friends);
