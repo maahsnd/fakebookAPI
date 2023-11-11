@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user-controller');
-const User = require('../models/User');
 const multer = require('multer');
-const path = require('path');
 const storage = new multer.memoryStorage();
 const upload = multer({ storage });
 const JWT = require('../verifyJWT');
