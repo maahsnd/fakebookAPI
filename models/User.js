@@ -8,7 +8,11 @@ const UserSchema = new Schema({
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
   friendRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  profilePhoto: { type: String },
+  profilePhoto: {
+    type: String,
+    default:
+      'https://res.cloudinary.com/dscsiijis/image/upload/v1699639144/exb7kacxqbdonuq6jkpd.jpg'
+  },
   bio: { type: String, maxLength: 400 }
 });
 
