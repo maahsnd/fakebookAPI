@@ -78,7 +78,22 @@ exports.log_in = asyncHandler(async (req, res, next) => {
   const token = jwt.sign({ username }, process.env.SECRET, {
     expiresIn: '2hr'
   });
-  console.error('success');
+  return res.status(200).json({
+    msg: 'Log in successful',
+    token,
+    userId: user._id
+  });
+});
+
+exports.guest_log_in = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ username: 'Guest User' });
+  if (!user) {
+    return res.status(500).json({ msg: 'Guest log in failed' });
+  }
+  const username = user.username;
+  const token = jwt.sign({ username }, process.env.SECRET, {
+    expiresIn: '2hr'
+  });
   return res.status(200).json({
     msg: 'Log in successful',
     token,
