@@ -52,8 +52,15 @@ exports.sign_up = [
         user.password = hashedPassword;
         await user.save();
       });
+      const token = jwt.sign({ username: user.username }, process.env.SECRET, {
+        expiresIn: '2hr'
+      });
+      res.status(200).json({
+        msg: 'Log in successful',
+        token,
+        userId: user._id
+      });
     }
-    res.status(200).json({ username: user.username });
   })
 ];
 
