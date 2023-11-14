@@ -1,39 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
+const authController = require('../controllers/auth-controller');
 
-// called by fb after login
-router.get(
-  '/auth/facebook/callback/',
-  passport.authenticate('facebook', {
-    failureRedirect: 'http://localhost:5173/login',
-    failureMessage: true
-  }),
-  function (req, res) {
-    req.login(req.user, function (err) {
-      if (err) {
-        return next(err);
-      }
-    });
-    res.redirect('http://localhost:5173/' + req.user._id);
-  }
-);
+router.post('/login', authController.log_in);
 
-//called by click on fb log in link
-router.get('/login/facebook', passport.authenticate('facebook'));
+router.post('/signup', authController.sign_up);
 
-//called after successful log in
-router.get('/', function (req, res, next) {
-  res.send('login success');
-});
-
-router.post('/logout', function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.status(200).send();
-  });
-});
+router.post('/login/guest', authController.guest_log_in);
 
 module.exports = router;

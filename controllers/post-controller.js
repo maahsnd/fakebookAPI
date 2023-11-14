@@ -8,8 +8,7 @@ exports.create_post = [
   body('text')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Post text cannot be blank')
-    .escape(),
+    .withMessage('Post text cannot be blank'),
 
   asyncHandler(async (req, res, next) => {
     try {
@@ -44,6 +43,22 @@ exports.get_all_posts = asyncHandler(async (req, res, next) => {
     const user = await User.findById(userId);
     userAndFriends = [user._id, ...user.friends];
     const posts = await Post.find({ author: { $in: userAndFriends } })
+      .populate({ path: 'comments', populate: { path: 'author' } })
+      .populate({ path: 'likes' })
+      .populate('author')
+      .sort('-time')
+      .exec();
+    res.status(200).json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+exports.get_all_user_posts = asyncHandler(async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+    const posts = await Post.find({ author: userId })
       .populate({ path: 'comments', populate: { path: 'author' } })
       .populate({ path: 'likes' })
       .populate('author')

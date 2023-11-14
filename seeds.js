@@ -1,9 +1,9 @@
 const { faker } = require('@faker-js/faker');
 const User = require('./models/User');
-const FriendRequest = require('./models/FriendRequest');
 const Post = require('./models/Post');
 const Comment = require('./models/Comment');
 const dotenv = require('dotenv').config();
+const bcrypt = require('bcryptjs');
 require('./mongoConfig');
 
 let users = [];
@@ -19,24 +19,62 @@ function getRandomElementFromArray(arr) {
 }
 
 async function createRandomUser() {
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+[\]{}|;:'",.<>?/]).{8,}$/;
+  let friend = getRandomElementFromArray(users);
+  friend === null ? (friend = []) : friend;
+
   const user = new User({
     _id: faker.database.mongodbObjectId(),
     username: faker.person.fullName(),
+    password: faker.internet.password({ regex: passwordRegex }),
+    friends: friend,
     profilePhoto: faker.image.avatar(),
-    friends: [getRandomElementFromArray(users)]
+    bio: faker.word.words({ count: { min: 3, max: 50 } })
   });
-  await user.save();
+  bcrypt.hash(user.password, 10, async (err, hashedPassword) => {
+    user.password = hashedPassword;
+    await user.save();
+  });
+  if (friend !== null) {
+    await User.findOneAndUpdate(
+      { _id: friend._id },
+      { $push: { friends: user } }
+    ).exec();
+  }
+
   return user;
 }
 
-async function createFriendRequest(to, from) {
-  const friendRequest = new FriendRequest({
-    from: from._id,
-    to: to._id
+async function createGuestUser() {
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+[\]{}|;:'",.<>?/]).{8,}$/;
+  const user = new User({
+    _id: faker.database.mongodbObjectId(),
+    username: 'Guest User',
+    password: faker.internet.password({ regex: passwordRegex }),
+    friends: [users[0], users[1]],
+    friendRequests: [
+      users[2],
+      users[3],
+      users[4],
+      users[5],
+      users[6],
+      users[7]
+    ],
+    profilePhoto:
+      'https://res.cloudinary.com/dscsiijis/image/upload/v1699639144/exb7kacxqbdonuq6jkpd.jpg',
+    bio: faker.word.words({ count: { min: 3, max: 50 } })
   });
-  to.friendRequests.push(friendRequest);
-  from.friendRequests.push(friendRequest);
-  await Promise.all([to.save(), from.save(), friendRequest.save()]);
+  bcrypt.hash(user.password, 10, async (err, hashedPassword) => {
+    user.password = hashedPassword;
+    await user.save();
+  });
+  await Promise.all([
+    User.findOneAndUpdate({ _id: users[0]._id }, { $push: { friends: user } }),
+    User.findOneAndUpdate({ _id: users[1]._id }, { $push: { friends: user } })
+  ]);
+  return user;
 }
 
 async function createPost(author) {
@@ -47,7 +85,7 @@ async function createPost(author) {
   }
   const post = new Post({
     author: author._id,
-    text: faker.lorem.words({ min: 1, max: 20 }),
+    text: faker.word.words({ count: { min: 3, max: 50 } }),
     comments: [],
     likes: likes
   });
@@ -59,7 +97,7 @@ async function createComment() {
   let post = getRandomElementFromArray(posts);
   const comment = new Comment({
     author: getRandomElementFromArray(users),
-    text: faker.word.adjective({ min: 1, max: 50 }),
+    text: faker.word.words({ count: { min: 3, max: 30 } }),
     post: post
   });
   post.comments.push(comment);
@@ -68,16 +106,15 @@ async function createComment() {
 }
 
 async function seed() {
-  const userCount = 5;
+  const userCount = 20;
 
   for (let i = 0; i < userCount; i++) {
     const user = await createRandomUser();
     users.push(user);
   }
 
-  for (let i = 0; i < users.length - 1; i++) {
-    await createFriendRequest(users[i], users[i + 1]);
-  }
+  const guestUser = await createGuestUser();
+  users.push(guestUser);
 
   for (let i = 0; i < users.length - 1; i++) {
     await createPost(getRandomElementFromArray(users));
@@ -86,8 +123,10 @@ async function seed() {
   for (let i = 0; i < userCount * 3; i++) {
     await createComment();
   }
+  console.log('done');
+  return;
 }
 
 seed();
-console.log('done');
+
 return;
