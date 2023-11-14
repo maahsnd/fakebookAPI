@@ -30,7 +30,7 @@ async function createRandomUser() {
     password: faker.internet.password({ regex: passwordRegex }),
     friends: friend,
     profilePhoto: faker.image.avatar(),
-    bio: faker.word.adjective({ min: 1, max: 50 })
+    bio: faker.word.words({ count: { min: 3, max: 50 } })
   });
   bcrypt.hash(user.password, 10, async (err, hashedPassword) => {
     user.password = hashedPassword;
@@ -54,10 +54,17 @@ async function createGuestUser() {
     username: 'Guest User',
     password: faker.internet.password({ regex: passwordRegex }),
     friends: [users[0], users[1]],
-    friendRequests: [users[2], users[3]],
+    friendRequests: [
+      users[2],
+      users[3],
+      users[4],
+      users[5],
+      users[6],
+      users[7]
+    ],
     profilePhoto:
       'https://res.cloudinary.com/dscsiijis/image/upload/v1699639144/exb7kacxqbdonuq6jkpd.jpg',
-    bio: faker.word.adjective({ min: 1, max: 50 })
+    bio: faker.word.words({ count: { min: 3, max: 50 } })
   });
   bcrypt.hash(user.password, 10, async (err, hashedPassword) => {
     user.password = hashedPassword;
@@ -78,7 +85,7 @@ async function createPost(author) {
   }
   const post = new Post({
     author: author._id,
-    text: faker.word.adjective({ min: 1, max: 50 }),
+    text: faker.word.words({ count: { min: 3, max: 50 } }),
     comments: [],
     likes: likes
   });
@@ -90,7 +97,7 @@ async function createComment() {
   let post = getRandomElementFromArray(posts);
   const comment = new Comment({
     author: getRandomElementFromArray(users),
-    text: faker.word.adjective({ min: 1, max: 50 }),
+    text: faker.word.words({ count: { min: 3, max: 30 } }),
     post: post
   });
   post.comments.push(comment);
@@ -99,7 +106,7 @@ async function createComment() {
 }
 
 async function seed() {
-  const userCount = 5;
+  const userCount = 20;
 
   for (let i = 0; i < userCount; i++) {
     const user = await createRandomUser();
