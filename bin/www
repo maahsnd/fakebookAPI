@@ -8,10 +8,10 @@ const app = require('../app');
 const debug = require('debug')('fakebookapi:server');
 const https = require('https');
 const fs = require('fs');
-const options = {
+/* const options = {
   key: fs.readFileSync('../localhost-key.pem'),
   cert: fs.readFileSync('../localhost.pem')
-};
+}; */
 
 /**
  * Get port from environment and store in Express.
@@ -24,7 +24,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-const server = https.createServer(options, app);
+const server = https.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
