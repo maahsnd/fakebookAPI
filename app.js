@@ -11,7 +11,7 @@ require('dotenv').config();
 require('./mongoConfig');
 
 const app = express();
-app.use(cors());
+app.use(cors());  
 
 const RateLimit = require('express-rate-limit');
 const limiter = RateLimit({
@@ -37,6 +37,8 @@ app.use(
     }
   })
 );
+
+app.set('trust proxy', 1);
 
 app.use(logger('dev'));
 app.use(express.json());
