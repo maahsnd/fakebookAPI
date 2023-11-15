@@ -6,14 +6,23 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const User = require('./models/User');
 const cors = require('cors');
+const compression = require('compression');
 require('dotenv').config();
 require('./mongoConfig');
+
+const app = express();
+
+const RateLimit = require('express-rate-limit');
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 200
+});
+
+app.use(limiter);
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
-
-const app = express();
 
 // Session middleware
 app.use(
@@ -28,17 +37,14 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-  })
-);
+app.use(cors({}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(compression());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
