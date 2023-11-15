@@ -9,12 +9,8 @@ const debug = require('debug')('fakebookapi:server');
 const https = require('https');
 const fs = require('fs');
 const options = {
-  key: fs.readFileSync(
-    '/Users/maahsnd/code/projects/fakebook/fakebookAPI/localhost-key.pem'
-  ),
-  cert: fs.readFileSync(
-    '/Users/maahsnd/code/projects/fakebook/fakebookAPI/localhost.pem'
-  )
+  key: fs.readFileSync('../localhost-key.pem'),
+  cert: fs.readFileSync('../localhost.pem')
 };
 
 /**
