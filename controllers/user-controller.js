@@ -23,7 +23,6 @@ async function handleUpload(file) {
 }
 
 exports.get_user = asyncHandler(async (req, res, next) => {
-  res.set('Access-Control-Allow-Origin', '*');
   const data = await User.findOne({ _id: req.params.id })
     .populate('friendRequests')
     .populate('friends')
@@ -46,7 +45,6 @@ exports.get_friends = asyncHandler(async (req, res, next) => {
 
 exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
   const userid = req.params.id;
-  res.set('Access-Control-Allow-Origin', '*');
   try {
     const data = await User.findById(userid, {
       _id: 0,

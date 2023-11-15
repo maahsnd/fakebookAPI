@@ -39,7 +39,6 @@ exports.create_post = [
 
 exports.get_all_posts = asyncHandler(async (req, res, next) => {
   try {
-    res.set('Access-Control-Allow-Origin', '*');
     const userId = req.params.userid;
     const user = await User.findById(userId);
     userAndFriends = [user._id, ...user.friends];
