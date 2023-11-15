@@ -11,6 +11,7 @@ require('dotenv').config();
 require('./mongoConfig');
 
 const app = express();
+app.use(cors());
 
 const RateLimit = require('express-rate-limit');
 const limiter = RateLimit({
@@ -37,7 +38,6 @@ app.use(
   })
 );
 
-app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
