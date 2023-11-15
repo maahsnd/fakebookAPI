@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 main().catch((err) => console.log(err));
