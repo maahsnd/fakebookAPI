@@ -15,14 +15,14 @@ cloudinary.config({
 
   module.exports = (image) => {
     return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload(image, opts, (err, result) => {
+        cloudinary.uploader.upload(image, opts, (error, result) => {
             console.log(result)
             if ( result && result.secure_url) {
                 console.log(result.secure_url);
                 return resolve(result.secure_url)
             }
-            console.log('24'+err.message)
-            return reject({message: err.message})
+            console.log(error.message)
+            return reject({message: error.message})
         })
     })
   }
