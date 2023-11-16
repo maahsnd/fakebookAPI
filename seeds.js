@@ -91,6 +91,7 @@ async function createPost(author) {
   });
   posts.push(post);
   await post.save();
+  await User.findOneAndUpdate({_id:author._id}, {$push: {posts: post}})
 }
 
 async function createComment() {
