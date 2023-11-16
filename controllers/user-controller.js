@@ -103,10 +103,8 @@ exports.decline_friend_request = asyncHandler(async (req, res, next) => {
 });
 
 exports.update_pic = asyncHandler(async (req, res, next) => {
-  console.log(req.body)
   try {
    const response = await uploadImage(req.body.image);
-   console.log(response)
     await User.findOneAndUpdate({_id: req.params.id}, {$set: {profilePhoto: response}})
    res.status(200).send()
   } catch (error) {
