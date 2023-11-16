@@ -109,7 +109,7 @@ exports.update_pic = asyncHandler(async (req, res, next) => {
    res.status(200).send()
   } catch (error) {
     console.log(error);
-    res.status(500).send()
+    res.status(500).send(response.message)
     return;
   }
 
