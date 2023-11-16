@@ -16,7 +16,7 @@ router.get('/:id/friends', UserController.get_friends);
 
 router.post('/:id/friendrequests', UserController.create_friend_request);
 
-router.post('/:id/profilepic', upload.any(), UserController.update_pic);
+router.post('/:id/profilepic', /* upload.any(), */ UserController.update_pic);
 
 router.post(
   '/:id/friendrequests/:requestid/accept',

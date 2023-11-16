@@ -110,6 +110,7 @@ exports.decline_friend_request = asyncHandler(async (req, res, next) => {
 });
 
 exports.update_pic = asyncHandler(async (req, res, next) => {
+  console.log(req.body)
   const userId = req.params.id;
   try {
     const b64 = Buffer.from(req.files[0].buffer).toString('base64');
