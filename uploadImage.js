@@ -21,7 +21,7 @@ cloudinary.config({
                 console.log(result.secure_url);
                 return resolve(result.secure_url)
             }
-            console.log(error.message)
+            console.log('24'+error.message)
             return reject({message: error.message})
         })
     })
