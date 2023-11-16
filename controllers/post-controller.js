@@ -120,9 +120,10 @@ exports.create_comment = [
         text: req.body.text,
         post: postId
       });
+      console.log(comment);
       await comment.save();
       await Post.updateOne({ _id: postId }, { $push: { comments: comment } });
-      res.status(200).json({ comment: comment });
+      res.status(200).send();
     } catch (err) {
       console.error(err);
       res.status(500).json(err);
