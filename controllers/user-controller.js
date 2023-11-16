@@ -1,18 +1,11 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
-const { request } = require('https');
-const { ObjectId } = require('mongodb');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
+const uploadImage = require("../uploadImage")
+
 require('dotenv').config();
 const { body, validationResult } = require('express-validator');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
-  secure: true
-});
+
 
 async function handleUpload(file) {
   const res = await cloudinary.uploader.upload(file, {
@@ -111,20 +104,14 @@ exports.decline_friend_request = asyncHandler(async (req, res, next) => {
 
 exports.update_pic = asyncHandler(async (req, res, next) => {
   console.log(req.body)
-  const userId = req.params.id;
   try {
-    const b64 = Buffer.from(req.files[0].buffer).toString('base64');
-    let dataURI = 'data:' + req.files[0].mimetype + ';base64,' + b64;
-    const cldRes = await handleUpload(dataURI);
-    await User.findOneAndUpdate(
-      { _id: userId },
-      { $set: { profilePhoto: cldRes.secure_url } }
-    );
+   const response = await uploadImage(req.body.image);
+   console.log(response)
+    await User.findOneAndUpdate({_id: req.params.id}, {$set: {profilePhoto: response}})
+   res.status(200).send()
   } catch (error) {
     console.log(error);
-    res.send({
-      message: error.message
-    });
+    res.status(500).send()
     return;
   }
 

@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user-controller');
-const multer = require('multer');
-const storage = new multer.memoryStorage();
-const upload = multer({ storage });
 const JWT = require('../verifyJWT');
 router.use(JWT.verify);
 
@@ -16,7 +13,7 @@ router.get('/:id/friends', UserController.get_friends);
 
 router.post('/:id/friendrequests', UserController.create_friend_request);
 
-router.post('/:id/profilepic', /* upload.any(), */ UserController.update_pic);
+router.post('/:id/profilepic', UserController.update_pic);
 
 router.post(
   '/:id/friendrequests/:requestid/accept',
