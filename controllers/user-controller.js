@@ -64,7 +64,7 @@ exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
 exports.create_friend_request = asyncHandler(async (req, res, next) => {
   const from = req.params.id;
   const to = req.body.to;
-  await User.findByIdAndUpdate(to, { $push: { friendRequests: from } });
+  await User.findByIdAndUpdate(to, { $addToSet: { friendRequests: from } });
   res.status(200).json({ to: to, from: from });
 });
 
