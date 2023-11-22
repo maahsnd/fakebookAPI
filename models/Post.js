@@ -7,7 +7,7 @@ const PostSchema = new Schema({
   text: { type: String, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  time: { type: Date, default: new Date() }
+  time: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Post', PostSchema);
