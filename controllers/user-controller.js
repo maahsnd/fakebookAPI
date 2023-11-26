@@ -39,17 +39,16 @@ exports.get_friends = asyncHandler(async (req, res, next) => {
 exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
   const userid = req.params.id;
   try {
-    const data = await User.findById(userid, {
-      _id: 0,
-      friendRequests: 1
-    }).exec();
-    const friendRequests = data.friendRequests;
+    const data = await User.findById(userid).exec();
+    let exclude = data.friendRequests
+   exclude.push(data._id);
+
+    console.log('reqs '+exclude)
     const users = await User.find({
       $and: [
         { friends: { $nin: [userid] } }, // Exclude users where userid is in their friends
-        { _id: { $ne: userid } }, // Exclude users where ID matches userid,
+         { _id: { $nin: exclude } },  // Exclude users where ID matches userid,users who have already requested current user
         { friendRequests: { $nin: [userid] } }, //Exclude users who current user has already requested
-        { _id: { $nin: friendRequests } } //Exclude users who have already requested current user
       ]
     })
       .sort('username')
