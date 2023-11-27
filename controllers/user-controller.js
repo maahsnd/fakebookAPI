@@ -42,8 +42,6 @@ exports.get_suggested_friends = asyncHandler(async (req, res, next) => {
     const data = await User.findById(userid).exec();
     let exclude = data.friendRequests
    exclude.push(data._id);
-
-    console.log('reqs '+exclude)
     const users = await User.find({
       $and: [
         { friends: { $nin: [userid] } }, // Exclude users where userid is in their friends
